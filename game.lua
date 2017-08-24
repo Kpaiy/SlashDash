@@ -1,6 +1,10 @@
 game = {
 	settings = {},
-	constants = {},
+	constants = {
+		tileWidth = 25,
+		gradientTolerance = 1,	-- the max height difference between tiles
+		gravity = 1000,
+	},
 	resources = {
 		graphics = {}
 	}
@@ -11,9 +15,6 @@ game.settings.resolution = {
 	y = 900
 }
 game.settings.title = "Slash Dash"
-
-game.constants.tileWidth = 25
-game.constants.gradientTolerance = 1	-- the max height difference between tiles
 
 function game.init()
 	math.randomseed(os.time())

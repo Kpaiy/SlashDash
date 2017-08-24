@@ -12,7 +12,12 @@ game.settings.resolution = {
 }
 game.settings.title = "Slash Dash"
 
+game.constants.tileWidth = 25
+game.constants.gradientTolerance = 1	-- the max height difference between tiles
+
 function game.init()
+	math.randomseed(os.time())
+
 	love.window.setTitle(game.settings.title)
 	love.window.setMode(game.settings.resolution.x, game.settings.resolution.y)
 	love.graphics.setDefaultFilter("nearest", "nearest")

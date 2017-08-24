@@ -4,13 +4,9 @@ require("terrain")
 function love.load()
 	game.init()
 	love.graphics.setDefaultFilter("nearest", "nearest")
-	-- image = love.graphics.newImage("resources/graphics/dirt.png")
-	-- image:setWrap("repeat")
 
-	-- w, h = image:getDimensions()
-	-- quad = love.graphics.newQuad(0, 0, 100, 25, w, h)
-
-	terrain.new(0, 0, 100, 100, game.resources.graphics.dirt)
+	-- terrain.new(0, 0, 100, 100, game.resources.graphics.dirt)
+	terrain.generateLevel()
 end
 
 function love.update()

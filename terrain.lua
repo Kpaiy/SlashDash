@@ -16,7 +16,7 @@ function terrain.new(x, y, w, h, tex)
 			y = y
 		},
 		width = w,
-		height = h,
+		x = h,
 		texture = tex,
 		quad = love.graphics.newQuad(0, 0, w, h, texWidth, texHeight)
 	}
@@ -31,5 +31,31 @@ function terrain.drawAll()
 	--NOTE: upper boundary is inclusive
 	for i = 1, #terrain do
 		terrain.draw(i)
+	end
+end
+
+function terrain.generateLevel()
+	maxHeight = math.floor(game.settings.resolution.y / game.constants.tileWidth)
+	curHeight = math.floor(maxHeight / 3)
+	prev1 = 0
+	prev2 = 0
+	for i = 0, math.floor(game.settings.resolution.x / game.constants.tileWidth) do
+		prev2 = prev1
+		prev1 = curHeight
+		curHeight = curHeight + math.random(-game.constants.gradientTolerance, game.constants.gradientTolerance)
+		while curHeight == prev2 do
+			curHeight = prev1
+			curHeight = curHeight + math.random(-game.constants.gradientTolerance, game.constants.gradientTolerance)
+		end
+
+		if curHeight < 1 then
+			curHeight = 1
+		end
+
+		if curHeight > math.floor(maxHeight / 3) then
+			curHeight = math.floor(maxHeight / 3)
+		end
+
+		terrain.new(i * game.constants.tileWidth, (maxHeight - curHeight) * game.constants.tileWidth, game.constants.tileWidth, game.constants.tileWidth * (curHeight), game.resources.graphics.dirt)
 	end
 end

@@ -31,6 +31,9 @@ player = {
 	onGround = false,
 	toDraw = {
 		arcs = {}	--x, y, r, a1, a2, t (time)
+	},
+	coolDowns = {
+		slash = 0
 	}
 }
 
@@ -52,6 +55,8 @@ function player.key(key)
 end
 
 function player.update(dt)
+	player.coolDown(dt)
+
 	player.move(dt)
 end
 
@@ -142,7 +147,19 @@ function player.jump()
 	end
 end
 
+function player.coolDown(dt)
+	if player.coolDowns.slash > 0 then
+		player.coolDowns.slash = player.coolDowns.slash - dt
+	end
+end
+
 function player.slash()
+	if player.coolDowns.slash > 0 then
+		return
+	end
+
+	player.coolDowns.slash = player.slashStats.coolDown
+
 	aimAngle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
 
 	player.toDraw.arcs[#player.toDraw.arcs + 1] = {

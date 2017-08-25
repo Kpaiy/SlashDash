@@ -20,8 +20,18 @@ player = {
 		jumps = 2, --current air jump counter
 		jumpAgain = true
 	},
+	slashStats = {
+		angle = 0.8,
+		length = 150,
+		coolDown = 0.2,
+		duration = 0.5,
+		maxAlpha = 200
+	},
 
 	onGround = false,
+	toDraw = {
+		arcs = {}	--x, y, r, a1, a2, t (time)
+	}
 }
 
 function player.getInput()
@@ -132,7 +142,39 @@ function player.jump()
 	end
 end
 
+function player.slash()
+	aimAngle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
+
+	player.toDraw.arcs[#player.toDraw.arcs + 1] = {
+		x = player.position.x + player.width / 2,
+		y = player.position.y + player.height / 2,
+		r = player.slashStats.length,
+		a1 = aimAngle - player.slashStats.angle,
+		a2 = aimAngle + player.slashStats.angle,
+		t = 0
+	}
+end
+
+function player.dash()
+
+end
+
 function player.draw()
+	for i=#player.toDraw.arcs, 1, -1 do
+		player.toDraw.arcs[i].t = player.toDraw.arcs[i].t + deltaTime
+		if player.toDraw.arcs[i].t > player.slashStats.duration then
+			table.remove(player.toDraw.arcs, i)
+			goto continue
+		end
+		opacity = player.slashStats.maxAlpha - player.slashStats.maxAlpha * (player.toDraw.arcs[i].t) / player.slashStats.duration
+		love.graphics.setColor(255, 120, 120, opacity)
+		love.graphics.arc("fill", player.toDraw.arcs[i].x, player.toDraw.arcs[i].y,
+			player.toDraw.arcs[i].r, player.toDraw.arcs[i].a1, player.toDraw.arcs[i].a2)
+
+
+		::continue::
+	end
+
 	love.graphics.setColor(255, 0, 0)
 	love.graphics.rectangle("fill", player.position.x, player.position.y, player.width, player.height)
 	love.graphics.setColor(255, 255, 255)

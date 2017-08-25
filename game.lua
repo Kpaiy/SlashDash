@@ -30,3 +30,12 @@ end
 function love.keypressed(key)
 	player.key(key)
 end
+
+function love.mousepressed(x ,y, button, istouch)
+	if button == 1 then
+		player.slash()
+	end
+	if button == 2 then
+		player.dash()
+	end
+end

@@ -3,6 +3,8 @@ require("terrain")
 require("player")
 require("util")
 
+deltaTime = 0
+
 function love.load()
 	game.init()
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -12,6 +14,7 @@ function love.load()
 end
 
 function love.update(dt)
+	deltaTime = dt
 	player.update(dt)
 end
 

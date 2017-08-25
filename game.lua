@@ -25,3 +25,8 @@ function game.init()
 
 	game.resources.graphics.dirt = love.graphics.newImage("resources/graphics/dirt.png")
 end
+
+
+function love.keypressed(key)
+	player.key(key)
+end

@@ -8,16 +8,16 @@ player = {
 		y = 0
 	},
 	health = 100,
-	width = 30,
-	height = 80,
+	width = 35,
+	height = 70,
 
 	moveSpeed = 350,
 	jumpStrength = 400,
 	friction = 10,
-	airControl = 2,
+	airControl = 2.5,
 	airJumps = {
-		maxJumps = 1, --number of jumps the character can do in the air
-		jumps = 1, --current air jump counter
+		maxJumps = 2, --number of jumps the character can do in the air
+		jumps = 2, --current air jump counter
 		jumpAgain = true
 	},
 
@@ -32,11 +32,13 @@ function player.getInput()
 	if love.keyboard.isDown("d") then
 		x = x + 1
 	end
-	jump = false
-	if love.keyboard.isDown("space") then
-		jump = true
+	return x
+end
+
+function player.key(key)
+	if key == "space" then
+		player.jump()
 	end
-	return x, jump
 end
 
 function player.update(dt)
@@ -44,10 +46,7 @@ function player.update(dt)
 end
 
 function player.move(dt)
-	input, jump = player.getInput()
-	if not jump then
-		player.airJumps.jumpAgain = true
-	end
+	input = player.getInput()
 
 	if player.onGround then
 		player.airJumps.jumps = player.airJumps.maxJumps
@@ -58,21 +57,9 @@ function player.move(dt)
 				player.velocity.x = player.velocity.x + input * player.moveSpeed * player.friction * dt
 			end
 		end
-
-		if jump and player.onGround then
-			player.onGround = false
-			player.airJumps.jumpAgain = false
-			player.velocity.y = -player.jumpStrength
-		end
 	else
 		if (input == 1 and player.velocity.x < player.moveSpeed) or (input == -1 and player.velocity.x > -player.moveSpeed) then
 			player.velocity.x = player.velocity.x + input * player.moveSpeed * player.airControl * dt
-		end
-		if jump and player.airJumps.jumps > 0 and player.airJumps.jumpAgain then
-			player.airJumps.jumps = player.airJumps.jumps - 1
-			player.airJumps.jumpAgain = false
-			player.velocity.y = -player.jumpStrength
-			player.velocity.x = player.moveSpeed * input
 		end
 	end
 
@@ -112,6 +99,37 @@ function player.move(dt)
 		end
 	end
 
+	player.clamp()
+end
+
+function player.clamp()
+	--prevents the player from leaving the bounds of the screen
+	if player.position.x < 0 then
+		player.position.x = 0
+	end
+	if player.position.y < 0 then
+		player.position.y = 0
+	end
+
+	if player.position.x + player.width > game.settings.resolution.x then
+		player.position.x = game.settings.resolution.x - player.width
+	end
+	if player.position.y + player.height > game.settings.resolution.y then
+		player.position.y = game.settings.resolution.y - player.height
+	end
+end
+
+function player.jump()
+	if player.onGround then
+		player.velocity.y = -player.jumpStrength
+		player.onGround = false
+	else
+		if player.airJumps.jumps > 0 then
+			player.velocity.y = -player.jumpStrength
+			player.velocity.x = player.getInput() * player.moveSpeed
+			player.airJumps.jumps = player.airJumps.jumps - 1
+		end
+	end
 end
 
 function player.draw()

@@ -18,7 +18,6 @@ player = {
 	airJumps = {
 		maxJumps = 2, --number of jumps the character can do in the air
 		jumps = 2, --current air jump counter
-		jumpAgain = true
 	},
 	slashStats = {
 		angle = 1,
@@ -48,7 +47,8 @@ player = {
 		dash = 0
 	},
 	dashes = 3,
-	alpha = 255
+	alpha = 255,
+	aiming = false
 }
 
 function player.getInput()
@@ -72,6 +72,15 @@ function player.update(dt)
 	player.coolDown(dt)
 
 	player.move(dt)
+
+	if love.mouse.isDown(2) then
+		player.aiming = true
+	else
+		if player.aiming == true then
+			player.dash()
+		end
+		player.aiming = false
+	end
 end
 
 function player.move(dt)
@@ -230,6 +239,8 @@ function player.dash()
 		end
 	end
 
+	player.onGround = false
+
 	player.dashes = player.dashes - 1
 	player.coolDowns.dash = player.dashStats.coolDown
 
@@ -276,6 +287,13 @@ function player.draw()
 		love.graphics.line(player.toDraw.dash[i].x1, player.toDraw.dash[i].y1, player.toDraw.dash[i].x2, player.toDraw.dash[i].y2)
 
 		::continue2::
+	end
+
+	if player.aiming then
+		angle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
+		x, y = util.toCartesian(angle, player.dashStats.length)
+		love.graphics.setColor(255, 120, 120, 50)
+		love.graphics.rectangle("fill", player.position.x + x, player.position.y + y, player.width, player.height)
 	end
 
 	love.graphics.setColor(255, 0, 0, player.alpha)

@@ -16,7 +16,7 @@ function terrain.new(x, y, w, h, tex)
 			y = y
 		},
 		width = w,
-		x = h,
+		height = h,
 		texture = tex,
 		quad = love.graphics.newQuad(0, 0, w, h, texWidth, texHeight)
 	}

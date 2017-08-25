@@ -21,20 +21,34 @@ player = {
 		jumpAgain = true
 	},
 	slashStats = {
-		angle = 0.8,
+		angle = 1,
 		length = 150,
 		coolDown = 0.2,
-		duration = 0.5,
+		duration = 0.25,
 		maxAlpha = 200
+	},
+	dashStats = {
+		maxCharges = 3,
+		length = 500,
+		coolDown = 1,
+		duration = 0.25,
+		maxAlpha = 200,
+		lineThickness = 5,
+		playerAlpha = 0,
+		alphaRecovery = 25
 	},
 
 	onGround = false,
 	toDraw = {
-		arcs = {}	--x, y, r, a1, a2, t (time)
+		slash = {},	--x, y, r, a1, a2, t (time)
+		dash = {} --x1, y1, x2, x2, a2, t (time)
 	},
 	coolDowns = {
-		slash = 0
-	}
+		slash = 0,
+		dash = 0
+	},
+	dashes = 3,
+	alpha = 255
 }
 
 function player.getInput()
@@ -85,7 +99,7 @@ function player.move(dt)
 	player.position.x = player.position.x + player.velocity.x * dt
 	for i = 1, #terrain do
 		if util.intersects(player.position.x, player.position.y, player.width, player.height,
-			terrain[i].position.x, terrain[i].position.y, terrain[i].width, terrain[i].width) then
+			terrain[i].position.x, terrain[i].position.y, terrain[i].width, terrain[i].height) then
 
 			if player.velocity.x >= 0 then
 				overlap = terrain[i].position.x - (player.position.x + player.width)
@@ -101,7 +115,7 @@ function player.move(dt)
 	player.onGround = false
 	for i = 1, #terrain do
 		if util.intersects(player.position.x, player.position.y, player.width, player.height,
-			terrain[i].position.x, terrain[i].position.y, terrain[i].width, terrain[i].width) then
+			terrain[i].position.x, terrain[i].position.y, terrain[i].width, terrain[i].height) then
 
 			if player.velocity.y >= 0 then
 				overlap = terrain[i].position.y - (player.position.y + player.height)
@@ -151,6 +165,26 @@ function player.coolDown(dt)
 	if player.coolDowns.slash > 0 then
 		player.coolDowns.slash = player.coolDowns.slash - dt
 	end
+
+	if player.coolDowns.dash > 0 and player.dashes < player.dashStats.maxCharges then
+		player.coolDowns.dash = player.coolDowns.dash - dt
+	end
+	if player.coolDowns.dash == player.dashStats.maxCharges then
+		player.coolDowns.dash = player.dashStats.coolDown
+	end
+	if player.coolDowns.dash <= 0 then
+		if player.dashes < player.dashStats.maxCharges then
+			player.dashes = player.dashes + 1
+			player.coolDowns.dash = player.dashStats.coolDown
+		end
+	end
+
+	if player.alpha < 255 then
+		player.alpha = player.alpha + player.dashStats.alphaRecovery
+	end
+	if player.alpha > 255 then
+		player.alpha = 255
+	end
 end
 
 function player.slash()
@@ -162,7 +196,7 @@ function player.slash()
 
 	aimAngle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
 
-	player.toDraw.arcs[#player.toDraw.arcs + 1] = {
+	player.toDraw.slash[#player.toDraw.slash + 1] = {
 		x = player.position.x + player.width / 2,
 		y = player.position.y + player.height / 2,
 		r = player.slashStats.length,
@@ -173,27 +207,79 @@ function player.slash()
 end
 
 function player.dash()
+	if player.dashes <= 0 then
+		return
+	end
+
+	angle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
+	x, y = util.toCartesian(angle, player.dashStats.length)
+
+	oldX, oldY = player.position.x, player.position.y
+	player.position.x = oldX + x
+	player.position.y = oldY + y
+
+	player.clamp()
+
+	for i = 1, #terrain do
+		if util.intersects(player.position.x, player.position.y, player.width, player.height,
+			terrain[i].position.x, terrain[i].position.y, terrain[i].width, terrain[i].height) then
+
+			player.position.x = oldX
+			player.position.y = oldY
+			return
+		end
+	end
+
+	player.dashes = player.dashes - 1
+	player.coolDowns.dash = player.dashStats.coolDown
+
+	player.velocity.x = 0
+	player.velocity.y = 0
+	player.airJumps.jumps = player.airJumps.maxJumps
+
+	player.alpha = player.dashStats.playerAlpha
+
+	player.toDraw.dash[#player.toDraw.dash + 1] = {
+		x1 = player.position.x + player.width / 2,
+		y1 = player.position.y + player.height / 2,
+		x2 = oldX + player.width / 2,
+		y2 = oldY + player.height / 2,
+		t = 0
+	}
 
 end
 
 function player.draw()
-	for i=#player.toDraw.arcs, 1, -1 do
-		player.toDraw.arcs[i].t = player.toDraw.arcs[i].t + deltaTime
-		if player.toDraw.arcs[i].t > player.slashStats.duration then
-			table.remove(player.toDraw.arcs, i)
+	for i=#player.toDraw.slash, 1, -1 do
+		player.toDraw.slash[i].t = player.toDraw.slash[i].t + deltaTime
+		if player.toDraw.slash[i].t > player.slashStats.duration then
+			table.remove(player.toDraw.slash, i)
 			goto continue
 		end
-		opacity = player.slashStats.maxAlpha - player.slashStats.maxAlpha * (player.toDraw.arcs[i].t) / player.slashStats.duration
+		opacity = player.slashStats.maxAlpha - player.slashStats.maxAlpha * (player.toDraw.slash[i].t) / player.slashStats.duration
 		love.graphics.setColor(255, 120, 120, opacity)
-		love.graphics.arc("fill", player.toDraw.arcs[i].x, player.toDraw.arcs[i].y,
-			player.toDraw.arcs[i].r, player.toDraw.arcs[i].a1, player.toDraw.arcs[i].a2)
-
+		love.graphics.arc("fill", player.toDraw.slash[i].x, player.toDraw.slash[i].y,
+			player.toDraw.slash[i].r, player.toDraw.slash[i].a1, player.toDraw.slash[i].a2)
 
 		::continue::
 	end
 
-	love.graphics.setColor(255, 0, 0)
+	love.graphics.setLineWidth(player.dashStats.lineThickness)
+	for i=#player.toDraw.dash, 1, -1 do
+		player.toDraw.dash[i].t = player.toDraw.dash[i].t + deltaTime
+		if player.toDraw.dash[i].t > player.dashStats.duration then
+			table.remove(player.toDraw.dash, i)
+			goto continue2
+		end
+		opacity = player.dashStats.maxAlpha - player.dashStats.maxAlpha * (player.toDraw.dash[i].t) / player.dashStats.duration
+		love.graphics.setColor(255, 120, 120, opacity)
+		love.graphics.line(player.toDraw.dash[i].x1, player.toDraw.dash[i].y1, player.toDraw.dash[i].x2, player.toDraw.dash[i].y2)
+
+		::continue2::
+	end
+
+	love.graphics.setColor(255, 0, 0, player.alpha)
 	love.graphics.rectangle("fill", player.position.x, player.position.y, player.width, player.height)
 	love.graphics.setColor(255, 255, 255)
-	love.graphics.print(player.airJumps.jumps)
+	love.graphics.print(player.dashes, 0, 0, 0, 2)
 end

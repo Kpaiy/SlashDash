@@ -29,7 +29,7 @@ player = {
 	dashStats = {
 		maxCharges = 3,
 		length = 500,
-		coolDown = 1,
+		coolDown = 2,
 		duration = 0.25,
 		maxAlpha = 200,
 		lineThickness = 5,
@@ -287,7 +287,7 @@ function player.draw()
 		::continue2::
 	end
 
-	if player.aiming then
+	if player.aiming and player.dashes ~= 0 then
 		angle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
 		x, y = util.toCartesian(angle, player.dashStats.length)
 		love.graphics.setColor(255, 0, 0, 50)

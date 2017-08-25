@@ -33,9 +33,13 @@ end
 
 function love.mousepressed(x ,y, button, istouch)
 	if button == 1 then
-		player.slash()
+		if player.aiming then
+			player.aiming = false
+		else
+			player.slash()
+		end
 	end
-	-- if button == 2 then
-	-- 	player.dash()
-	-- end
+	if button == 2 then
+		player.aiming = true
+	end
 end

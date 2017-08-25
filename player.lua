@@ -73,9 +73,7 @@ function player.update(dt)
 
 	player.move(dt)
 
-	if love.mouse.isDown(2) then
-		player.aiming = true
-	else
+	if not love.mouse.isDown(2) then
 		if player.aiming == true then
 			player.dash()
 		end
@@ -292,8 +290,8 @@ function player.draw()
 	if player.aiming then
 		angle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
 		x, y = util.toCartesian(angle, player.dashStats.length)
-		love.graphics.setColor(255, 120, 120, 50)
-		love.graphics.rectangle("fill", player.position.x + x, player.position.y + y, player.width, player.height)
+		love.graphics.setColor(255, 0, 0, 50)
+		love.graphics.rectangle("line", player.position.x + x, player.position.y + y, player.width, player.height)
 	end
 
 	love.graphics.setColor(255, 0, 0, player.alpha)

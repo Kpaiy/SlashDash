@@ -22,3 +22,16 @@ function util.toCartesian(angle, modulus)
 	y = math.sin(angle) * modulus
 	return x, y
 end
+
+function util.clamp(x, y, w, h)
+	if x < 0 then x = 0 end
+	if y < 0 then y = 0 end
+	if x + w > game.settings.resolution.x then
+		x = game.settings.resolution.x - w
+	end
+	if y + h > game.settings.resolution.y then
+		y = game.settings.resolution.y - h
+	end
+
+	return x, y
+end

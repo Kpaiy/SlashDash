@@ -29,12 +29,12 @@ player = {
 	dashStats = {
 		maxCharges = 3,
 		length = 500,
-		coolDown = 2,
+		coolDown = 3,
 		duration = 0.25,
 		maxAlpha = 200,
 		lineThickness = 5,
-		playerAlpha = 0,
-		alphaRecovery = 25
+		playerAlpha = -50,
+		alphaRecovery = 50
 	},
 
 	onGround = false,
@@ -44,7 +44,7 @@ player = {
 	},
 	coolDowns = {
 		slash = 0,
-		dash = 0
+		dash = 3
 	},
 	dashes = 3,
 	alpha = 255,
@@ -240,7 +240,7 @@ function player.dash()
 	player.onGround = false
 
 	player.dashes = player.dashes - 1
-	player.coolDowns.dash = player.dashStats.coolDown
+	-- player.coolDowns.dash = player.dashStats.coolDown
 
 	player.velocity.x = 0
 	player.velocity.y = 0
@@ -290,12 +290,13 @@ function player.draw()
 	if player.aiming and player.dashes ~= 0 then
 		angle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
 		x, y = util.toCartesian(angle, player.dashStats.length)
-		love.graphics.setColor(255, 0, 0, 50)
-		love.graphics.rectangle("line", player.position.x + x, player.position.y + y, player.width, player.height)
+		x, y = util.clamp(player.position.x + x, player.position.y + y, player.width, player.height)
+		love.graphics.setColor(255, 0, 0, 64)
+		love.graphics.rectangle("line", x, y, player.width, player.height)
 	end
 
 	love.graphics.setColor(255, 0, 0, player.alpha)
 	love.graphics.rectangle("fill", player.position.x, player.position.y, player.width, player.height)
 	love.graphics.setColor(255, 255, 255)
-	love.graphics.print(player.dashes, 0, 0, 0, 2)
+	love.graphics.print(player.dashes .. "\n" .. player.coolDowns.dash, 0, 0, 0, 2)
 end

@@ -291,7 +291,7 @@ function player.draw()
 		angle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
 		x, y = util.toCartesian(angle, player.dashStats.length)
 		x, y = util.clamp(player.position.x + x, player.position.y + y, player.width, player.height)
-		love.graphics.setColor(255, 0, 0, 64)
+		love.graphics.setColor(255, 0, 0, 127)
 		love.graphics.rectangle("line", x, y, player.width, player.height)
 	end
 

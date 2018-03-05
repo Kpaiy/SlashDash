@@ -221,6 +221,10 @@ function player.dash()
 	angle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
 	x, y = util.toCartesian(angle, player.dashStats.length)
 
+	if player.position.x + x < 0 or player.position.x + x + player.width > game.settings.resolution.x or player.position.y + y < 0 or player.position.y + y + player.height > game.settings.resolution.y then
+		return
+	end
+
 	oldX, oldY = player.position.x, player.position.y
 	player.position.x = oldX + x
 	player.position.y = oldY + y
@@ -290,9 +294,14 @@ function player.draw()
 	if player.aiming and player.dashes ~= 0 then
 		angle = util.cursorAngle(player.position.x, player.position.y, player.width, player.height)
 		x, y = util.toCartesian(angle, player.dashStats.length)
-		x, y = util.clamp(player.position.x + x, player.position.y + y, player.width, player.height)
-		love.graphics.setColor(255, 0, 0, 127)
-		love.graphics.rectangle("line", x, y, player.width, player.height)
+		-- x, y = util.clamp(player.position.x + x, player.position.y + y, player.width, player.height)
+		x = player.position.x + x
+		y = player.position.y + y
+		if x < 0 or x + player.width > game.settings.resolution.x or y < 0 or y + player.height > game.settings.resolution.y then
+		else
+			love.graphics.setColor(255, 0, 0, 127)
+			love.graphics.rectangle("line", x, y, player.width, player.height)
+		end
 	end
 
 	love.graphics.setColor(255, 0, 0, player.alpha)

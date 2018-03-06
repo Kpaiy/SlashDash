@@ -17,6 +17,10 @@ function util.cursorAngle(x, y, w, h)
 	return math.atan2(cy - ry, cx - rx)
 end
 
+function util.angleFromTo(fx, fy, tx, ty)
+    return math.atan2(ty - fy, tx - fx)
+end
+
 function util.toCartesian(angle, modulus)
 	x = math.cos(angle) * modulus
 	y = math.sin(angle) * modulus

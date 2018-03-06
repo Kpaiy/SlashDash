@@ -1,4 +1,6 @@
 player = {
+    health = 5,
+
 	position = {
 		x = 0,
 		y = 0
@@ -66,6 +68,13 @@ function player.key(key)
 	if key == "space" then
 		player.jump()
 	end
+end
+
+function player.damage(dmg)
+    player.health = player.health - dmg
+    if player.health <= 0 then
+        -- TODO: implement lose condition
+    end
 end
 
 function player.update(dt)

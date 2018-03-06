@@ -12,7 +12,7 @@ function love.load()
 
 	-- terrain.new(0, 0, 100, 100, game.resources.graphics.dirt)
 	terrain.generateLevel()
-    projectile.new(900, 400, 2, projectile.types.normal)
+    projectile.new(900, 400, -1, projectile.types.normal)
 end
 
 function love.update(dt)

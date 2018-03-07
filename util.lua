@@ -39,3 +39,14 @@ function util.clamp(x, y, w, h)
 
 	return x, y
 end
+
+-- returns the distance between two points
+function util.distance(x1, y1, x2, y2)
+    return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
+end
+
+-- returns the center of a rectangle
+function util.center(x, y, w, h)
+    return x + w/2, y + h/2
+end
+

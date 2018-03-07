@@ -12,7 +12,9 @@ enemy = {
             thinks = false,
             thinkTime = -1
         }
-    }
+    },
+    jitter = 2,
+    jitterTime = 0.5
 }
 
 function enemy.new(x, y, type)
@@ -29,6 +31,8 @@ function enemy.new(x, y, type)
 
         state = type.startState,
         thinkCounter = type.thinkTime,
+
+        jitter = 0,
         
         position = {
             x = x,
@@ -46,6 +50,11 @@ end
 function enemy.update(i, dt)
     if enemy[i].health <= 0 then
         return true
+    end
+
+    -- pain jitter tracking
+    if enemy[i].jitter > 0 then
+        enemy[i].jitter = enemy[i].jitter - dt
     end
 
     -- if enemy thinks, calculate thinks
@@ -95,9 +104,22 @@ function enemy.updateAll(dt)
     end
 end
 
+function enemy.damage(i, dmg)
+    enemy[i].jitter = enemy.jitterTime
+    enemy[i].health = enemy[i].health - 1
+end
+
 function enemy.draw(i)
+    -- calculate jitter
+    jitterX = 0
+    jitterY = 0
+    if enemy[i].jitter > 0 then
+        jitterX = math.random(-enemy.jitter, enemy.jitter)
+        jitterY = math.random(-enemy.jitter, enemy.jitter)
+    end
+
     love.graphics.setColor(unpack(enemy[i].color))
-    love.graphics.rectangle("fill", enemy[i].position.x, enemy[i].position.y, enemy[i].size, enemy[i].size)
+    love.graphics.rectangle("fill", enemy[i].position.x + jitterX, enemy[i].position.y + jitterY, enemy[i].size, enemy[i].size)
 end
 function enemy.drawAll()
     for i = 1, #enemy do

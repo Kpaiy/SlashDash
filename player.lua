@@ -26,7 +26,8 @@ player = {
 		length = 150,
 		coolDown = 0.2,
 		duration = 0.25,
-		maxAlpha = 200
+		maxAlpha = 200,
+        damage = 1
 	},
 	dashStats = {
 		maxCharges = 3,
@@ -242,6 +243,18 @@ function player.slash()
 		a2 = aimAngle + player.slashStats.angle,
 		t = 0
 	}
+
+    -- check for enemies in range to damage
+    for i = 1, #enemy do
+        -- get distance from centre of arc to enemy
+        if util.distance(player.toDraw.slash[#player.toDraw.slash].x, player.toDraw.slash[#player.toDraw.slash].y, enemy[i].position.x + enemy[i].size/2, enemy[i].position.y + enemy[i].size/2) <= player.toDraw.slash[#player.toDraw.slash].r then
+            -- get angle from centre of arc to enemy
+            angle = util.angleFromTo(player.toDraw.slash[#player.toDraw.slash].x, player.toDraw.slash[#player.toDraw.slash].y, enemy[i].position.x + enemy[i].size/2, enemy[i].position.y + enemy[i].size/2)
+            if angle > player.toDraw.slash[#player.toDraw.slash].a1 and angle < player.toDraw.slash[#player.toDraw.slash].a2 then
+                enemy.damage(i, player.slashStats.damage)
+            end
+        end
+    end
 end
 
 function player.dash()

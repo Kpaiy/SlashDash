@@ -8,7 +8,7 @@ enemy = {
             states = {"move"},
             startState = "move",
             color = {170, 0 ,170},
-            size = 50,
+            size = 30,
             thinks = false,
             thinkTime = -1
         }

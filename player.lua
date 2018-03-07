@@ -36,8 +36,13 @@ player = {
 		maxAlpha = 200,
 		lineThickness = 5,
 		playerAlpha = -50,
-		alphaRecovery = 50
+		alphaRecovery = 1500
 	},
+    invulnStats = {
+        coolDown = 1,
+        jitter = 2,
+        alphaHit = 200,
+    },
 
 	onGround = false,
 	toDraw = {
@@ -46,11 +51,13 @@ player = {
 	},
 	coolDowns = {
 		slash = 0,
-		dash = 3
+		dash = 3,
+        invuln = 0
 	},
 	dashes = 3,
 	alpha = 255,
 	aiming = false
+
 }
 
 function player.getInput()
@@ -71,7 +78,18 @@ function player.key(key)
 end
 
 function player.damage(dmg)
+    -- if player is invulnerable, end
+    if player.coolDowns.invuln > 0 then
+        return
+    end
+
     player.health = player.health - dmg
+    player.coolDowns.invuln = player.invulnStats.coolDown
+    player.alpha = player.alpha - player.invulnStats.alphaHit
+
+    love.graphics.setColor(255, 0, 0, 100)
+    love.graphics.rectangle("fill", 0, 0, game.settings.resolution.x, game.settings.resolution.y)
+
     if player.health <= 0 then
         -- TODO: implement lose condition
     end
@@ -196,11 +214,15 @@ function player.coolDown(dt)
 	end
 
 	if player.alpha < 255 then
-		player.alpha = player.alpha + player.dashStats.alphaRecovery
+		player.alpha = player.alpha + player.dashStats.alphaRecovery * dt
 	end
 	if player.alpha > 255 then
 		player.alpha = 255
 	end
+
+    if player.coolDowns.invuln > 0 then
+        player.coolDowns.invuln = player.coolDowns.invuln - dt
+    end
 end
 
 function player.slash()
@@ -313,8 +335,16 @@ function player.draw()
 		end
 	end
 
+    -- calculate player jitter upon taking damage
+    jitterX = 0
+    jitterY = 0
+    if player.coolDowns.invuln > 0 then
+        jitterX = math.random(-player.invulnStats.jitter, player.invulnStats.jitter)
+        jitterY = math.random(-player.invulnStats.jitter, player.invulnStats.jitter)
+    end
+
 	love.graphics.setColor(255, 0, 0, player.alpha)
-	love.graphics.rectangle("fill", player.position.x, player.position.y, player.width, player.height)
+	love.graphics.rectangle("fill", player.position.x + jitterX, player.position.y + jitterY, player.width, player.height)
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.print(player.dashes .. "\n" .. player.coolDowns.dash, 0, 0, 0, 2)
 end

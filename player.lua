@@ -37,7 +37,10 @@ player = {
 		maxAlpha = 200,
 		lineThickness = 5,
 		playerAlpha = -50,
-		alphaRecovery = 1500
+		alphaRecovery = 1500,
+
+        hitDistance = 35, -- maximum perpendicular distance from dash-line to hit
+        damage = 1
 	},
     invulnStats = {
         coolDown = 1,
@@ -303,6 +306,16 @@ function player.dash()
 		y2 = oldY + player.height / 2,
 		t = 0
 	}
+
+    -- check for collisions with enemies
+    for i = 1, #enemy do
+        pd = util.perpendicularDistance(enemy[i].position.x + enemy[i].size/2, enemy[i].position.y + enemy[i].size/2, player.position.x + player.width/2, player.position.y + player.height/2, oldX + player.width/2, oldY + player.height/2)
+        print(pd)
+        if pd <= player.dashStats.hitDistance and pd ~= -1 then
+            -- damage the enemy
+            enemy.damage(i, player.dashStats.damage)
+        end
+    end           
 
 end
 

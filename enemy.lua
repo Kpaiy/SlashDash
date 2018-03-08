@@ -10,7 +10,8 @@ enemy = {
             color = {170, 0 ,170},
             size = 15,
             thinks = false,
-            thinkTime = -1
+            thinkTime = -1,
+            clips = true,  -- true if can collide with terrain
         }
     },
     jitter = 2,
@@ -28,6 +29,7 @@ function enemy.new(x, y, type)
         size = type.size,
         thinks = type.thinks,
         thinkTime = type.thinkTime,
+        clips = type.clips,
 
         state = type.startState,
         thinkCounter = type.thinkTime,
@@ -79,10 +81,46 @@ function enemy.update(i, dt)
         end
     end
 
+    -- apply gravity to non-flyers
+    if not flying then
+        enemy[i].velocity.y = enemy[i].velocity.y + game.constants.gravity * dt
+    end
+
     -- update positions based on velocity
-    -- TODO: collision detection with terrain
     enemy[i].position.x = enemy[i].position.x + enemy[i].velocity.x * dt
+    if enemy[i].clips then
+        -- TODO: collision detection with terrain
+        for j = 1, #terrain do
+            if util.intersects(enemy[i].position.x, enemy[i].position.y, enemy[i].size, enemy[i].size,
+                terrain[j].position.x, terrain[j].position.y, terrain[j].width, terrain[j].height) then
+
+                if enemy[i].velocity.x >= 0 then
+                    overlap = terrain[j].position.x - (enemy[i].position.x + enemy[i].size)
+                else
+                    overlap = terrain[j].position.x + terrain[j].width - enemy[i].position.x
+                end
+                enemy[i].position.x = enemy[i].position.x + overlap
+                enemy[i].velocity.x = 0
+            end
+        end
+    end
     enemy[i].position.y = enemy[i].position.y + enemy[i].velocity.y * dt
+    if enemy[i].clips then
+        -- TODO: collision detection with terrain
+        for j = 1, #terrain do
+            if util.intersects(enemy[i].position.x, enemy[i].position.y, enemy[i].size, enemy[i].size,
+                terrain[j].position.x, terrain[j].position.y, terrain[j].width, terrain[j].height) then
+
+                if enemy[i].velocity.y >= 0 then
+                    overlap = terrain[j].position.y - (enemy[i].position.y + enemy[i].size)
+                else
+                    overlap = terrain[j].position.y + terrain[j].height - enemy[i].position.y
+                end
+                enemy[i].position.y = enemy[i].position.y + overlap
+                enemy[i].velocity.y = 0
+            end
+        end
+    end
 
     -- damage player if melee and touching player
     if enemy[i].melee then

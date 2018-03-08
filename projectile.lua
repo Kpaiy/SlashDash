@@ -37,6 +37,14 @@ function projectile.update(i, dt)
         player.damage(1)
         return true
     end
+
+    -- if it is colliding with terrain, delete it
+    for j = 1, #terrain do
+        if util.intersects(c.x - c.size/2, c.y - c.size/2, c.size, c.size,
+             terrain[j].position.x, terrain[j].position.y, terrain[j].width, terrain[j].height) then
+            return true
+        end
+    end
     return false
 end
 function projectile.updateAll(dt)

@@ -3,7 +3,7 @@ projectile = {
         normal = {
             speed = 200,
             color = {255, 255, 100},
-            size = 10,
+            size = 6,
         }
     }
 }
@@ -28,6 +28,13 @@ function projectile.update(i, dt)
     -- if the projectile is entirely out of map bounds, delete it
     if c.x + c.size/2 < 0 or c.x - c.size/2 > game.settings.resolution.x or
         c.y + c.size/2 < 0 or c.y - c.size/2 > game.settings.resolution.y then
+        return true
+    end
+
+    -- if it is colliding with the player, damage the player and delete it
+    if util.intersects(c.x - c.size/2, c.y - c.size/2, c.size, c.size,
+        player.position.x, player.position.y, player.width, player.height) then
+        player.damage(1)
         return true
     end
     return false

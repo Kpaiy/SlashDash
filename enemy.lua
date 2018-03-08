@@ -4,7 +4,7 @@ enemy = {
             flying = true,
             melee = true,
             speed = 50,
-            health = 1,
+            health = 9,
             states = {"move"},
             startState = "move",
             color = {170, 0 ,170},
@@ -120,6 +120,12 @@ function enemy.draw(i)
 
     love.graphics.setColor(unpack(enemy[i].color))
     love.graphics.rectangle("fill", enemy[i].position.x + jitterX, enemy[i].position.y + jitterY, enemy[i].size, enemy[i].size)
+
+    -- draw pain color if hurt
+    if enemy[i].jitter > enemy.jitterTime/3 then
+        love.graphics.setColor(255, 0, 0, 100)
+        love.graphics.rectangle("fill", enemy[i].position.x + jitterX, enemy[i].position.y + jitterY, enemy[i].size, enemy[i].size)
+    end
 end
 function enemy.drawAll()
     for i = 1, #enemy do

@@ -4,7 +4,7 @@ enemy = {
             flying = true,
             melee = true,
             speed = 50,
-            health = 9,
+            health = 2,
             states = {"move"},
             startState = "move",
             color = {170, 0 ,170},
@@ -15,7 +15,9 @@ enemy = {
         }
     },
     jitter = 2,
-    jitterTime = 0.5
+    jitterTime = 0.5,
+    friction = 10,
+    airControl = 2.5
 }
 
 function enemy.new(x, y, type)
@@ -33,6 +35,8 @@ function enemy.new(x, y, type)
 
         state = type.startState,
         thinkCounter = type.thinkTime,
+
+        onGround = false,
 
         jitter = 0,
         
@@ -78,6 +82,25 @@ function enemy.update(i, dt)
             x, y = util.toCartesian(angle, enemy[i].speed)
             enemy[i].velocity.x = x
             enemy[i].velocity.y = y
+        else
+            -- if not flying, move only horizontally, according to friction rules
+            if enemy[i].onGround then
+                enemy[i].velocity.x = enemy[i].velocity.x - enemy[i].velocity.x * enemy.friction * dt
+
+                -- move toward player
+                direction = 0
+                if player.position.x + player.width/2 < enemy[i].position.x + enemy[i].size/2 then
+                    direction = -1
+                end
+                if player.position.x + player.width/2 > enemy[i].position.x + enemy[i].size/2 then
+                    direction = 1
+                end
+                if onGround then
+                    enemy[i].velocity.x = enemy[i].velocity.x + direction * enemy[i].speed * enemy.friction * dt
+                else
+                    enemy[i].velocity.x = enemy[i].velocity.x + direction * enemy[i].speed * enemy.airControl * dt
+                end
+            end
         end
     end
 
@@ -89,7 +112,6 @@ function enemy.update(i, dt)
     -- update positions based on velocity
     enemy[i].position.x = enemy[i].position.x + enemy[i].velocity.x * dt
     if enemy[i].clips then
-        -- TODO: collision detection with terrain
         for j = 1, #terrain do
             if util.intersects(enemy[i].position.x, enemy[i].position.y, enemy[i].size, enemy[i].size,
                 terrain[j].position.x, terrain[j].position.y, terrain[j].width, terrain[j].height) then
@@ -105,8 +127,10 @@ function enemy.update(i, dt)
         end
     end
     enemy[i].position.y = enemy[i].position.y + enemy[i].velocity.y * dt
+    if not enemy[i].flying then
+        enemy[i].onGround = false
+    end
     if enemy[i].clips then
-        -- TODO: collision detection with terrain
         for j = 1, #terrain do
             if util.intersects(enemy[i].position.x, enemy[i].position.y, enemy[i].size, enemy[i].size,
                 terrain[j].position.x, terrain[j].position.y, terrain[j].width, terrain[j].height) then
@@ -118,6 +142,9 @@ function enemy.update(i, dt)
                 end
                 enemy[i].position.y = enemy[i].position.y + overlap
                 enemy[i].velocity.y = 0
+            end
+            if not enemy[i].flying then
+                enemy[i].onGround = true
             end
         end
     end

@@ -258,6 +258,21 @@ function player.slash()
             end
         end
     end
+
+    -- check for projectiles in range to deflect
+    for i = 1, #projectile do
+        -- check distance from centre of arc to projectile
+        if util.distance(player.toDraw.slash[#player.toDraw.slash].x, 
+            player.toDraw.slash[#player.toDraw.slash].y, projectile[i].x, projectile[i].y) <= player.toDraw.slash[#player.toDraw.slash].r then
+            -- check angle
+            angle = util.angleFromTo(player.toDraw.slash[#player.toDraw.slash].x, player.toDraw.slash[#player.toDraw.slash].y, projectile[i].x, projectile[i].y)
+            if angle > player.toDraw.slash[#player.toDraw.slash].a1 and angle < player.toDraw.slash[#player.toDraw.slash].a2 then
+                -- successful deflection, redirect projectile to cursor
+                newAngle = util.cursorAngle(projectile[i].x, projectile[i].y, 0, 0)
+                projectile[i].angle = newAngle
+            end
+        end
+    end
 end
 
 function player.dash()

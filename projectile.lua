@@ -45,6 +45,16 @@ function projectile.update(i, dt)
             return true
         end
     end
+    
+    -- if it is colliding with an enemy, delete and damage
+    for j = 1, #enemy do
+        if util.intersects(c.x - c.size/2, c.y - c.size/2, c.size, c.size,
+            enemy[j].position.x, enemy[j].position.y, enemy[j].size, enemy[j].size) then
+            enemy.damage(j, 1)
+            return true
+        end
+    end
+
     return false
 end
 function projectile.updateAll(dt)

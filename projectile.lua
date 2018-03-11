@@ -1,7 +1,7 @@
 projectile = {
     types = {
         normal = {
-            speed = 200,
+            speed = 300,
             color = {255, 255, 100},
             size = 6,
         }

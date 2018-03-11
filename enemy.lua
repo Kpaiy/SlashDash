@@ -12,10 +12,30 @@ enemy = {
             thinks = false,
             thinkTime = -1,
             clips = true,  -- true if can collide with terrain
-        }
+
+            fireRate = -1,
+            bullet = projectile.types.normal,
+        },
+        archer = {
+            flying = false,
+            melee = false,
+            speed = 300,
+            health = 3,
+            states = {"move", "shoot"},
+            startState = "move",
+            color = {0, 170, 0},
+            size = 20,
+            thinks = true,
+            thinkTime = 3,
+            clips = true,
+
+            fireRate = 1,
+            bullet = projectile.types.normal,
+        },
     },
     jitter = 2,
     jitterTime = 0.5,
+    jumpStrength = 300,
     friction = 10,
     airControl = 2.5
 }
@@ -33,8 +53,12 @@ function enemy.new(x, y, type)
         thinkTime = type.thinkTime,
         clips = type.clips,
 
+        fireRate = type.fireRate,
+        bullet = type.bullet,
+
         state = type.startState,
         thinkCounter = type.thinkTime,
+        fireCounter = 0,
 
         onGround = false,
 
@@ -68,10 +92,16 @@ function enemy.update(i, dt)
         enemy[i].thinkCounter = enemy[i].thinkCounter - dt
         if enemy[i].thinkCounter <= 0 then
             -- think if the cooldown is ready
-            -- TODO: pick a random state out of the available states
+            r = math.random(1, #enemy[i].states)
+            enemy[i].state = enemy[i].states[r]
             
             enemy[i].thinkCounter = enemy[i].thinkTime
         end
+    end
+
+    -- calculate fire rate cooldown
+    if enemy[i].fireCounter > 0 then
+        enemy[i].fireCounter = enemy[i].fireCounter - dt
     end
 
     -- determine next action by state
@@ -85,8 +115,6 @@ function enemy.update(i, dt)
         else
             -- if not flying, move only horizontally, according to friction rules
             if enemy[i].onGround then
-                enemy[i].velocity.x = enemy[i].velocity.x - enemy[i].velocity.x * enemy.friction * dt
-
                 -- move toward player
                 direction = 0
                 if player.position.x + player.width/2 < enemy[i].position.x + enemy[i].size/2 then
@@ -107,6 +135,10 @@ function enemy.update(i, dt)
     -- apply gravity to non-flyers
     if not flying then
         enemy[i].velocity.y = enemy[i].velocity.y + game.constants.gravity * dt
+        -- apply friction to ground units
+        if enemy[i].onGround then
+            enemy[i].velocity.x = enemy[i].velocity.x - enemy[i].velocity.x * enemy.friction * dt
+        end
     end
 
     -- update positions based on velocity
@@ -123,6 +155,12 @@ function enemy.update(i, dt)
                 end
                 enemy[i].position.x = enemy[i].position.x + overlap
                 enemy[i].velocity.x = 0
+
+                -- if the enemy is a grounded type and on the ground, jump
+                if enemy[i].onGround and enemy[i].flying == false then
+                    enemy[i].velocity.y = -enemy.jumpStrength
+                    enemy[i].onGround = false
+                end
             end
         end
     end
@@ -158,6 +196,22 @@ function enemy.update(i, dt)
         end
     end
 
+    if enemy[i].state == "shoot" then
+        -- shoot if the enemy is able to
+        if enemy[i].fireCounter <= 0 then
+            -- TODO: spawn projectile
+            angle = util.angleFromTo(enemy[i].position.x + enemy[i].size/2, enemy[i].position.y + enemy[i].size/2,
+                player.position.x + player.width/2, player.position.y + player.height/2)
+            -- calculate offset so projectile doesn't spawn inside enemy and damage them
+            xo, yo = util.toCartesian(angle, enemy[i].size)
+            x = enemy[i].position.x + enemy[i].size/2 + xo
+            y = enemy[i].position.y + enemy[i].size/2 + yo
+            projectile.new(x, y, angle, enemy[i].bullet)
+
+            enemy[i].fireCounter = enemy[i].fireRate
+        end
+    end
+
     return false
 end
 function enemy.updateAll(dt)
@@ -188,7 +242,7 @@ function enemy.draw(i)
 
     -- draw pain color if hurt
     if enemy[i].jitter > enemy.jitterTime/3 then
-        love.graphics.setColor(255, 0, 0, 100)
+        love.graphics.setColor(255, 0, 0, 125)
         love.graphics.rectangle("fill", enemy[i].position.x + jitterX, enemy[i].position.y + jitterY, enemy[i].size, enemy[i].size)
     end
 end

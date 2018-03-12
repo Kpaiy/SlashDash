@@ -40,6 +40,11 @@ enemy = {
     airControl = 2.5
 }
 
+enemy.types = {
+    enemy.types.bat,
+    enemy.types.archer,
+}
+
 function enemy.new(x, y, type)
     enemy[#enemy + 1] = {
         flying = type.flying,

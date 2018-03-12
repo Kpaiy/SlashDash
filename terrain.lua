@@ -58,4 +58,17 @@ function terrain.generateLevel()
 
 		terrain.new(i * game.constants.tileWidth, (maxHeight - curHeight) * game.constants.tileWidth, game.constants.tileWidth, game.constants.tileWidth * (curHeight), game.resources.graphics.dirt)
 	end
+
+    -- place player in center of map, on ground
+    x = game.settings.resolution.x/2
+    y = game.settings.resolution.y - 1
+
+    for i = 1, #terrain do
+        if util.intersects(x, y, player.width, player.height, terrain[i].position.x,
+            terrain[i].position.y, terrain[i].width, terrain[i].height) then
+            y = terrain[i].position.y - player.height
+        end
+    end
+    player.position.x = x
+    player.position.y = y
 end

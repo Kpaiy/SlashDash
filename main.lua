@@ -26,7 +26,7 @@ function love.update(dt)
 
     -- if no enemies left, spawn 10 more
     if #enemy == 0 then
-        for i = 1, 1 do
+        for i = 1, 7 do
             game.spawnEnemy()
         end
     end

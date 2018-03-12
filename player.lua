@@ -256,6 +256,13 @@ function player.slash()
             if angle > player.toDraw.slash[#player.toDraw.slash].a1 and angle < player.toDraw.slash[#player.toDraw.slash].a2 then
                 enemy.damage(i, player.slashStats.damage)
             end
+            -- try adding and substracting 2*pi from angle
+            if angle + 2*math.pi > player.toDraw.slash[#player.toDraw.slash].a1 and angle + 2*math.pi < player.toDraw.slash[#player.toDraw.slash].a2 then
+                enemy.damage(i, player.slashStats.damage)
+            end
+            if angle - 2*math.pi > player.toDraw.slash[#player.toDraw.slash].a1 and angle - 2*math.pi < player.toDraw.slash[#player.toDraw.slash].a2 then
+                enemy.damage(i, player.slashStats.damage)
+            end
         end
     end
 

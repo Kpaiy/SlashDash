@@ -1,14 +1,27 @@
 projectile = {
     types = {
         normal = {
-            speed = 325,
+            speed = 300,
             color = {255, 255, 100},
             size = 6,
+        },
+        fast = {
+            speed = 450,
+            color = {100, 255, 255},
+            size = 5,
         }
     }
 }
 
 function projectile.new(x, y, angle, type)
+    -- check for instant collision with terrain
+    for j = 1, #terrain do
+        if util.intersects(x - type.size/2, y - type.size/2, type.size, type.size,
+             terrain[j].position.x, terrain[j].position.y, terrain[j].width, terrain[j].height) then
+             return
+        end
+    end
+
     projectile[#projectile + 1] = {
         speed = type.speed,
         color = type.color,

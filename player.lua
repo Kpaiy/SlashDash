@@ -39,7 +39,7 @@ player = {
 		playerAlpha = -50,
 		alphaRecovery = 1500,
 
-        hitDistance = 60, -- maximum perpendicular distance from dash-line to hit
+        hitDistance = 80, -- maximum perpendicular distance from dash-line to hit
         damage = 1
 	},
     invulnStats = {

@@ -32,6 +32,22 @@ enemy = {
             fireRate = 1,
             bullet = projectile.types.normal,
         },
+        wraith = {
+            flying = true,
+            melee = false,
+            speed = 80,
+            health = 1,
+            states = {"move", "shoot"},
+            startState = "move",
+            color = {170, 170, 255},
+            size = 18,
+            thinks = true,
+            thinkTime = 1,
+            clips = false,
+
+            fireRate = 0.5,
+            bullet = projectile.types.fast,
+        }
     },
     jitter = 2,
     jitterTime = 0.5,
@@ -43,6 +59,7 @@ enemy = {
 enemy.types = {
     enemy.types.bat,
     enemy.types.archer,
+    enemy.types.wraith,
 }
 
 function enemy.new(x, y, type)
@@ -138,7 +155,7 @@ function enemy.update(i, dt)
     end
 
     -- apply gravity to non-flyers
-    if not flying then
+    if not enemy[i].flying then
         enemy[i].velocity.y = enemy[i].velocity.y + game.constants.gravity * dt
         -- apply friction to ground units
         if enemy[i].onGround then
@@ -202,9 +219,13 @@ function enemy.update(i, dt)
     end
 
     if enemy[i].state == "shoot" then
+        -- if enemy is flying, remain stationary
+        if enemy[i].flying then
+            enemy[i].velocity.x = 0
+            enemy[i].velocity.y = 0
+        end
         -- shoot if the enemy is able to
         if enemy[i].fireCounter <= 0 then
-            -- TODO: spawn projectile
             angle = util.angleFromTo(enemy[i].position.x + enemy[i].size/2, enemy[i].position.y + enemy[i].size/2,
                 player.position.x + player.width/2, player.position.y + player.height/2)
             -- calculate offset so projectile doesn't spawn inside enemy and damage them

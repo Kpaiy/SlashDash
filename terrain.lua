@@ -39,7 +39,7 @@ function terrain.generateLevel()
 	curHeight = math.floor(maxHeight / 3)
 	prev1 = 0
 	prev2 = 0
-	for i = 0, math.floor(game.settings.resolution.x / game.constants.tileWidth) do
+	for i = 0, math.floor(game.settings.resolution.x / game.constants.tileWidth) - 1 do
 		prev2 = prev1
 		prev1 = curHeight
 		curHeight = curHeight + math.random(-game.constants.gradientTolerance, game.constants.gradientTolerance)

@@ -38,4 +38,5 @@ function love.draw()
     projectile.drawAll()
     enemy.drawAll()
 	player.draw()
+    game.hud()
 end

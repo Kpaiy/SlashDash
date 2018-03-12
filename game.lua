@@ -5,6 +5,7 @@ game = {
 		gradientTolerance = 1,	-- the max height difference between tiles
 		gravity = 1000,
         spawnDistance = 250, -- minimum distance of newly spawned enemies from player's center
+        spawnHealth = 5, -- starting health of the player
 	},
 	resources = {
 		graphics = {}
@@ -79,6 +80,11 @@ function game.spawnEnemy()
         -- all good, spawn
         enemy.new(x, y, type)
     end
+end
+
+-- draw the hud onto the screen
+function game.hud()
+
 end
 
 function love.keypressed(key)

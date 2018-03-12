@@ -1,5 +1,5 @@
 player = {
-    health = 5,
+    health = game.constants.spawnHealth,
 
 	position = {
 		x = 0,
@@ -393,7 +393,7 @@ function player.draw()
 	love.graphics.setColor(255, 0, 0, player.alpha)
 	love.graphics.rectangle("fill", player.position.x + jitterX, player.position.y + jitterY, player.width, player.height)
 	love.graphics.setColor(255, 255, 255)
-	love.graphics.print(player.dashes .. "\n" .. player.coolDowns.dash, 0, 0, 0, 2)
+	-- love.graphics.print(player.dashes .. "\n" .. player.coolDowns.dash, 0, 0, 0, 2)
 
 	-- draw damage flash if hurt
 	if player.coolDowns.invuln == player.invulnStats.coolDown then

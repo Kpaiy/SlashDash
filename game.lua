@@ -26,6 +26,9 @@ function game.init()
 	love.graphics.setDefaultFilter("nearest", "nearest")
 
 	game.resources.graphics.dirt = love.graphics.newImage("resources/graphics/dirt.png")
+    game.resources.graphics.background = love.graphics.newImage("resources/graphics/backdrop.png")
+
+    terrain.init()
 end
 
 -- spawns a random enemy at a random position not too close to player

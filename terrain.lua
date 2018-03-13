@@ -8,6 +8,16 @@ terrain = {}
 		- quad
 ]]
 
+-- create backdrop quad
+function terrain.init()
+    texWidth, texHeight = game.resources.graphics.background:getDimensions()
+    terrain.background = {
+        texture = game.resources.graphics.background,
+        quad = love.graphics.newQuad(0, 0, game.settings.resolution.x, game.settings.resolution.y, texWidth, texHeight)
+    }
+    terrain.background.texture:setWrap("repeat") -- ensure tiling of texture
+end
+
 function terrain.new(x, y, w, h, tex)
 	texWidth, texHeight = tex:getDimensions()
 	terrain[#terrain + 1] = {
@@ -28,6 +38,8 @@ function terrain.draw(i)
 	love.graphics.draw(terrain[i].texture, terrain[i].quad, terrain[i].position.x, terrain[i].position.y)
 end
 function terrain.drawAll()
+    -- draw backdrop first
+    love.graphics.draw(terrain.background.texture, terrain.background.quad, 0, 0)
 	--NOTE: upper boundary is inclusive
 	for i = 1, #terrain do
 		terrain.draw(i)

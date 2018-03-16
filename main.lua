@@ -34,6 +34,9 @@ end
 
 function love.draw()
 	-- love.graphics.draw(image, quad, 50, 50, 0, 1, 1)
+    
+    love.graphics.setColor(255, 255, 255, 255)
+
 	terrain.drawAll()
     projectile.drawAll()
     enemy.drawAll()

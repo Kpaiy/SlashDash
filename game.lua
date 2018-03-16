@@ -6,10 +6,17 @@ game = {
 		gravity = 1000,
         spawnDistance = 250, -- minimum distance of newly spawned enemies from player's center
         spawnHealth = 5, -- starting health of the player
+        topHud = 3, -- how to portion the screen for each side of the top of the hud to take up
+        botHud = 4, -- how to portion the lower segment of the hud
+        hudOpacity = 80,
 	},
 	resources = {
-		graphics = {}
-	}
+		graphics = {
+            ui = {},
+        }
+	},
+
+    ui = {}
 }
 
 game.settings.resolution = {
@@ -28,7 +35,18 @@ function game.init()
 	game.resources.graphics.dirt = love.graphics.newImage("resources/graphics/dirt.png")
     game.resources.graphics.background = love.graphics.newImage("resources/graphics/backdrop.png")
 
+    game.resources.graphics.ui.heart = love.graphics.newImage("resources/graphics/ui/heart.png")
+    game.resources.graphics.ui.dash = love.graphics.newImage("resources/graphics/ui/dash.png")
+    game.resources.graphics.ui.noDash = love.graphics.newImage("resources/graphics/ui/nodash.png")
+
     terrain.init()
+
+    w, h = game.resources.graphics.ui.heart:getDimensions()
+    game.ui.heart = love.graphics.newQuad(0, 0, w, h, w, h)
+    w, h = game.resources.graphics.ui.dash:getDimensions()
+    game.ui.dash = love.graphics.newQuad(0, 0, w, h, w, h)
+    w, h = game.resources.graphics.ui.noDash:getDimensions()
+    game.ui.noDash = love.graphics.newQuad(0, 0, w, h, w, h)
 end
 
 -- spawns a random enemy at a random position not too close to player
@@ -87,6 +105,30 @@ end
 
 -- draw the hud onto the screen
 function game.hud()
+    eLTop = game.settings.resolution.x / game.constants.topHud
+
+    -- top left
+    love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
+    love.graphics.rectangle("fill", 0, 0, eLTop, 50)
+    love.graphics.setColor(255, 255, 255, 255)
+    w, h = game.resources.graphics.ui.heart:getDimensions()
+    love.graphics.draw(game.resources.graphics.ui.heart, game.ui.heart, 10, 25 - h/2)
+
+    -- top right
+    love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
+    love.graphics.rectangle("fill", 2 * eLTop, 0, eLTop, 50)
+
+    -- bottom left
+    eLBot = game.settings.resolution.x / game.constants.botHud
+    love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
+    love.graphics.rectangle("fill", 0, 50, eLBot, 50)
+
+    -- cooldown radial
+    cd = player.coolDowns.dash / player.dashStats.coolDown * 2*math.pi
+    love.graphics.setColor(255, 0, 0, 255)
+    love.graphics.arc("fill", 28, 75, 18, -math.pi/2, 2*math.pi - cd - math.pi/2)
+    love.graphics.setColor(150, 0, 0, 255)
+    love.graphics.arc("fill", 28, 75, 15, -math.pi/2, 2*math.pi - cd - math.pi/2)
 
 end
 

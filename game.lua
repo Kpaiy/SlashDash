@@ -62,7 +62,7 @@ function game.spawnEnemy()
         y = math.random(0, game.settings.resolution.y - type.size)
 
         -- check if not too close to player
-        if util.distance(x + type.size/2, y + type.size/2, player.position.x + player.width/2, 
+        if util.distance(x + type.size/2, y + type.size/2, player.position.x + player.width/2,
             player.position.y + player.height/2) <= game.constants.spawnDistance then
             goto flyRetry
         end
@@ -93,7 +93,7 @@ function game.spawnEnemy()
         end
 
         -- check distance to player
-        if util.distance(x + type.size/2, y + type.size/2, player.position.x + player.width/2, 
+        if util.distance(x + type.size/2, y + type.size/2, player.position.x + player.width/2,
             player.position.y + player.height/2) <= game.constants.spawnDistance then
             goto groundRetry
         end
@@ -130,6 +130,30 @@ function game.hud()
     love.graphics.setColor(150, 0, 0, 255)
     love.graphics.arc("fill", 28, 75, 15, -math.pi/2, 2*math.pi - cd - math.pi/2)
 
+	if player.dashes == 3 then
+		love.graphics.setColor(255, 0, 0, 255)
+		love.graphics.setLineWidth(3)
+		love.graphics.arc("line", 28, 75, 18, -math.pi/2, 1.5*math.pi)
+	end
+
+    -- ability graphics
+	love.graphics.setColor(255, 255, 255, 255)
+    w, h = game.resources.graphics.ui.dash:getDimensions()
+    if player.dashes >= 1 then
+        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 50, 75 - h/2)
+    else
+        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 50, 75 - h/2)
+    end
+    if player.dashes >= 2 then
+        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 50 + w, 75 - h/2)
+    else
+        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 50 + w, 75 - h/2)
+    end
+    if player.dashes >= 3 then
+        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 50 + 2*w, 75 - h/2)
+    else
+        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 50 + 2*w, 75 - h/2)
+    end
 end
 
 function love.keypressed(key)

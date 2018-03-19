@@ -8,7 +8,7 @@ game = {
         spawnHealth = 5, -- starting health of the player
         topHud = 3, -- how to portion the screen for each side of the top of the hud to take up
         botHud = 4, -- how to portion the lower segment of the hud
-        hudOpacity = 80,
+        hudOpacity = 50,
 	},
 	resources = {
 		graphics = {
@@ -114,10 +114,19 @@ function game.hud()
     w, h = game.resources.graphics.ui.heart:getDimensions()
     love.graphics.draw(game.resources.graphics.ui.heart, game.ui.heart, 10, 25 - h/2)
 
+    -- health bar
+    love.graphics.setColor(180, 0, 75, 255)
+    love.graphics.setColor( 90, 0, 37, 255)
+    love.graphics.rectangle("fill", w + 20, 35/2, eLTop - w - 40, 15)
+    healthP = player.health / game.constants.spawnHealth
+    love.graphics.setColor(255, 0, 0, 255)
+    love.graphics.rectangle("fill", w + 20, 35/2, (eLTop - w - 40) * healthP, 15)
+    love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.setLineWidth(2)
+    love.graphics.rectangle("line", w + 20, 35/2, eLTop - w - 40, 15)
+    
     -- top right
     love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
-    love.graphics.rectangle("fill", 2 * eLTop, 0, eLTop, 50)
-
     -- bottom left
     eLBot = game.settings.resolution.x / game.constants.botHud
     love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
@@ -140,19 +149,19 @@ function game.hud()
 	love.graphics.setColor(255, 255, 255, 255)
     w, h = game.resources.graphics.ui.dash:getDimensions()
     if player.dashes >= 1 then
-        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 50, 75 - h/2)
+        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 75, 75 - h/2)
     else
-        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 50, 75 - h/2)
+        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 75, 75 - h/2)
     end
     if player.dashes >= 2 then
-        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 50 + w, 75 - h/2)
+        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 75 + w, 75 - h/2)
     else
-        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 50 + w, 75 - h/2)
+        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 75 + w, 75 - h/2)
     end
     if player.dashes >= 3 then
-        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 50 + 2*w, 75 - h/2)
+        love.graphics.draw(game.resources.graphics.ui.dash, game.ui.dash, 75 + 2*w, 75 - h/2)
     else
-        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 50 + 2*w, 75 - h/2)
+        love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 75 + 2*w, 75 - h/2)
     end
 end
 

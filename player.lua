@@ -1,6 +1,4 @@
 player = {
-    health = game.constants.spawnHealth,
-
 	position = {
 		x = 0,
 		y = 0
@@ -9,7 +7,7 @@ player = {
 		x = 0,
 		y = 0
 	},
-	health = 100,
+    health = game.constants.spawnHealth,
 	width = 35,
 	height = 70,
 
@@ -95,6 +93,7 @@ function player.damage(dmg)
     love.graphics.rectangle("fill", 0, 0, game.settings.resolution.x, game.settings.resolution.y)
 
     if player.health <= 0 then
+        player.health = 0
         -- TODO: implement lose condition
     end
 end

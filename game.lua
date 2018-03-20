@@ -9,6 +9,8 @@ game = {
         topHud = 3, -- how to portion the screen for each side of the top of the hud to take up
         botHud = 4, -- how to portion the lower segment of the hud
         hudOpacity = 50,
+
+        comboMax = 3.5, -- maximum combo multiplier
 	},
 	resources = {
 		graphics = {

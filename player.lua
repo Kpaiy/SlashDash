@@ -62,7 +62,7 @@ player = {
 
     -- combo and score
     score = 0,
-    combo = 3.4,
+    combo = 1,
 }
 
 function player.getInput()
@@ -242,8 +242,8 @@ function player.comboUpdate(dt)
     if player.combo == 1 then
         return
     end
-    if player.combo > game.constants.comboMax then
-        player.combo = game.constants.comboMax
+    if player.combo >= game.constants.comboMax then
+        player.combo = game.constants.comboMax - 0.01
     end
 
     -- combo decay
@@ -256,6 +256,13 @@ function player.comboUpdate(dt)
     -- ensure is not less than one
     if player.combo < 1 then
         player.combo = 1
+    end
+end
+
+function player.addCombo(cmb)
+    player.combo = player.combo + cmb
+    if player.combo > game.constants.comboMax then
+        player.combo = game.constants.comboMax
     end
 end
 
@@ -285,13 +292,16 @@ function player.slash()
             angle = util.angleFromTo(player.toDraw.slash[#player.toDraw.slash].x, player.toDraw.slash[#player.toDraw.slash].y, enemy[i].position.x + enemy[i].size/2, enemy[i].position.y + enemy[i].size/2)
             if angle > player.toDraw.slash[#player.toDraw.slash].a1 and angle < player.toDraw.slash[#player.toDraw.slash].a2 then
                 enemy.damage(i, player.slashStats.damage)
+                player.addCombo(game.constants.comboSlash)
             end
             -- try adding and substracting 2*pi from angle
             if angle + 2*math.pi > player.toDraw.slash[#player.toDraw.slash].a1 and angle + 2*math.pi < player.toDraw.slash[#player.toDraw.slash].a2 then
                 enemy.damage(i, player.slashStats.damage)
+                player.addCombo(game.constants.comboSlash)
             end
             if angle - 2*math.pi > player.toDraw.slash[#player.toDraw.slash].a1 and angle - 2*math.pi < player.toDraw.slash[#player.toDraw.slash].a2 then
                 enemy.damage(i, player.slashStats.damage)
+                player.addCombo(game.constants.comboSlash)
             end
         end
     end
@@ -307,6 +317,7 @@ function player.slash()
                 -- successful deflection, redirect projectile to cursor
                 newAngle = util.cursorAngle(projectile[i].x, projectile[i].y, 0, 0)
                 projectile[i].angle = newAngle
+                player.addCombo(game.constants.comboDeflect)
             end
         end
     end
@@ -365,6 +376,7 @@ function player.dash()
         if pd <= player.dashStats.hitDistance and pd ~= -1 then
             -- damage the enemy
             enemy.damage(i, player.dashStats.damage)
+            player.addCombo(game.constants.comboDash)
         end
     end           
 

@@ -244,6 +244,7 @@ function enemy.updateAll(dt)
     for i = #enemy, 1, -1 do
         delete = enemy.update(i, dt)
         if delete then
+            player.addCombo(game.constants.comboKill)
             table.remove(enemy, i)
         end
     end

@@ -64,6 +64,7 @@ function projectile.update(i, dt)
         if util.intersects(c.x - c.size/2, c.y - c.size/2, c.size, c.size,
             enemy[j].position.x, enemy[j].position.y, enemy[j].size, enemy[j].size) then
             enemy.damage(j, 1)
+            player.addCombo(game.constants.comboProjectile)
             return true
         end
     end

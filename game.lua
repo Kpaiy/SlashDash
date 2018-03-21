@@ -10,11 +10,16 @@ game = {
         botHud = 4, -- how to portion the lower segment of the hud
         hudOpacity = 50,
 
-        comboMax = 3.5, -- maximum combo multiplier
+        comboMax = 5.0, -- maximum combo multiplier
         comboDecay = 0.10, -- combo decay scalar
         decayExponent = 0.5, -- combo exponent for decay
 
-        comboHit = 0.75, -- amount of multiplier to remove when player is hurt
+        comboHit = 1.00, -- amount of multiplier to remove when player is hurt
+        comboDash = 0.20, -- amount to give for every enemy hurt by dash
+        comboSlash = 0.05, -- amount to give for every enemy hurt by slash
+        comboDeflect = 0.05, -- amount to give for every projectile deflected
+        comboProjectile = 0.3, -- amount to give for every enemy hit by a projectile
+        comboKill = 0.30 -- amount to give for every enemy killed
 	},
 	resources = {
 		graphics = {

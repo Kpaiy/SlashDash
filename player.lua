@@ -62,7 +62,7 @@ player = {
 
     -- combo and score
     score = 0,
-    combo = 1,
+    combo = 5,
 }
 
 function player.getInput()

@@ -142,13 +142,47 @@ function game.hud()
     -- top right
     love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
     love.graphics.rectangle("fill", game.settings.resolution.x - eLTop, 0, eLTop, 50)
-    w, h = game.resources.graphics.ui.heart:getDimensions()
-    love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.draw(game.resources.graphics.ui.star, game.ui.star, game.settings.resolution.x - w - 10, 25 - h/2)
-
     -- combo bar
     comboP = (player.combo - 1) / (game.constants.comboMax - 1)
-    love.graphics.setColor(255, 255, 255, 255)
+
+    -- get combo colour
+    h = (1 - comboP) * 300 / 60 - 1
+    x = 1 - math.abs((h % 2) - 1)
+    c = 1
+    r = 0
+    g = 0
+    b = 0
+    if -1 <= h and h <= 0 then
+        r = c
+        b = x
+    elseif 0 <= h and h <= 1 then
+        r = c
+        g = x
+    elseif 1 <= h and h <= 2 then
+        r = x
+        g = c
+    elseif 2 <= h and h <= 3 then
+        g = c
+        b = x
+    elseif 3 <= h and h <= 4 then
+        g = x
+        b = c
+    elseif 4 <= h and h <= 5 then
+        r = x
+        b = c
+    elseif 5 <= h and h <= 6 then
+        r = c
+        b = x
+    end
+
+    r = r * 255
+    g = g * 255
+    b = b * 255
+    love.graphics.setColor(r, g, b, 255)
+    w, h = game.resources.graphics.ui.heart:getDimensions()
+    love.graphics.draw(game.resources.graphics.ui.star, game.ui.star, game.settings.resolution.x - w - 10, 25 - h/2)
+
+
     love.graphics.rectangle("fill", game.settings.resolution.x - w - 20 - (eLTop - w - 40) * comboP, 35/2, (eLTop - w - 40) * comboP, 15)
     -- love.graphics.rectangle("fill", game.settings.resolution.x - w - 20 - (eLTop - w - 40) * 0.5, 35/2, (eLTop - w - 40) * 0.5, 15)
     

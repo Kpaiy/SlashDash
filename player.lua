@@ -58,8 +58,11 @@ player = {
 	},
 	dashes = 3,
 	alpha = 255,
-	aiming = false
+	aiming = false,
 
+    -- combo and score
+    score = 0,
+    combo = 3.4,
 }
 
 function player.getInput()
@@ -85,6 +88,12 @@ function player.damage(dmg)
         return
     end
 
+    -- apply combo penalty
+    player.combo = player.combo - game.constants.comboHit
+    if player.combo < 1 then
+        player.combo = 1
+    end
+
     player.health = player.health - dmg
     player.coolDowns.invuln = player.invulnStats.coolDown
     player.alpha = player.alpha - player.invulnStats.alphaHit
@@ -100,6 +109,7 @@ end
 
 function player.update(dt)
 	player.coolDown(dt)
+    player.comboUpdate(dt)
 
 	player.move(dt)
 
@@ -225,6 +235,27 @@ function player.coolDown(dt)
 
     if player.coolDowns.invuln > 0 then
         player.coolDowns.invuln = player.coolDowns.invuln - dt
+    end
+end
+
+function player.comboUpdate(dt)
+    if player.combo == 1 then
+        return
+    end
+    if player.combo > game.constants.comboMax then
+        player.combo = game.constants.comboMax
+    end
+
+    -- combo decay
+    decayRate = game.constants.comboDecay / (game.constants.comboMax - player.combo)
+    decayRate = decayRate - game.constants.comboDecay / (game.constants.comboMax - 1)
+    decayRate = math.pow(decayRate, game.constants.decayExponent)    
+
+    player.combo = player.combo - decayRate * dt
+
+    -- ensure is not less than one
+    if player.combo < 1 then
+        player.combo = 1
     end
 end
 

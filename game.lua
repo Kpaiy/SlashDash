@@ -11,6 +11,10 @@ game = {
         hudOpacity = 50,
 
         comboMax = 3.5, -- maximum combo multiplier
+        comboDecay = 0.10, -- combo decay scalar
+        decayExponent = 0.5, -- combo exponent for decay
+
+        comboHit = 0.75, -- amount of multiplier to remove when player is hurt
 	},
 	resources = {
 		graphics = {
@@ -40,6 +44,7 @@ function game.init()
     game.resources.graphics.ui.heart = love.graphics.newImage("resources/graphics/ui/heart.png")
     game.resources.graphics.ui.dash = love.graphics.newImage("resources/graphics/ui/dash.png")
     game.resources.graphics.ui.noDash = love.graphics.newImage("resources/graphics/ui/nodash.png")
+    game.resources.graphics.ui.star = love.graphics.newImage("resources/graphics/ui/star.png")
 
     terrain.init()
 
@@ -49,6 +54,8 @@ function game.init()
     game.ui.dash = love.graphics.newQuad(0, 0, w, h, w, h)
     w, h = game.resources.graphics.ui.noDash:getDimensions()
     game.ui.noDash = love.graphics.newQuad(0, 0, w, h, w, h)
+    w, h = game.resources.graphics.ui.star:getDimensions()
+    game.ui.star = love.graphics.newQuad(0, 0, w, h, w, h)
 end
 
 -- spawns a random enemy at a random position not too close to player
@@ -129,6 +136,21 @@ function game.hud()
     
     -- top right
     love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
+    love.graphics.rectangle("fill", game.settings.resolution.x - eLTop, 0, eLTop, 50)
+    w, h = game.resources.graphics.ui.heart:getDimensions()
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(game.resources.graphics.ui.star, game.ui.star, game.settings.resolution.x - w - 10, 25 - h/2)
+
+    -- combo bar
+    comboP = (player.combo - 1) / (game.constants.comboMax - 1)
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.rectangle("fill", game.settings.resolution.x - w - 20 - (eLTop - w - 40) * comboP, 35/2, (eLTop - w - 40) * comboP, 15)
+    -- love.graphics.rectangle("fill", game.settings.resolution.x - w - 20 - (eLTop - w - 40) * 0.5, 35/2, (eLTop - w - 40) * 0.5, 15)
+    
+    love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.setLineWidth(2)
+    love.graphics.rectangle("line", game.settings.resolution.x - w - 20 - (eLTop - w - 40), 35/2, eLTop - w - 40, 15)
+
     -- bottom left
     eLBot = game.settings.resolution.x / game.constants.botHud
     love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)

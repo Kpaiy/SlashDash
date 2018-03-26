@@ -63,6 +63,8 @@ player = {
     -- combo and score
     score = 0,
     combo = 1,
+    displayScore = 0,
+    scoreRate = 0, -- rate of score increase
 }
 
 function player.getInput()
@@ -110,6 +112,7 @@ end
 function player.update(dt)
 	player.coolDown(dt)
     player.comboUpdate(dt)
+    player.scoreUpdate(dt)
 
 	player.move(dt)
 
@@ -264,6 +267,24 @@ function player.addCombo(cmb)
     if player.combo > game.constants.comboMax then
         player.combo = game.constants.comboMax
     end
+end
+
+function player.scoreUpdate(dt)
+    if player.displayScore == player.score then
+        player.scoreRate = 0
+        return
+    end
+    diff = player.score - player.displayScore
+    rate = game.constants.scoreGrowth * math.pow(game.constants.scoreBase, diff)
+    if rate > game.constants.scoreCap then
+        rate = game.constants.scoreCap
+    end
+    player.displayScore = player.displayScore + rate * dt
+    player.displayScore = math.floor(player.displayScore + 0.5)
+    if player.displayScore > player.score then
+        player.displayScore = player.score
+    end
+    player.scoreRate = rate
 end
 
 function player.addScore(score)

@@ -15,8 +15,8 @@ game = {
         decayExponent = 0.5, -- combo exponent for decay
 
         scoreBase = 1.5, -- base to exponenet by score difference
-        scoreGrowth = 2, -- growth coefficient
-        scoreCap = 150, -- score growth cap
+        scoreGrowth = 5, -- growth coefficient
+        scoreCap = 100, -- score growth cap
 
         comboHit = 1.00, -- amount of multiplier to remove when player is hurt
         comboDash = 0.20, -- amount to give for every enemy hurt by dash
@@ -234,10 +234,12 @@ function game.hud()
     -- bottom right
     love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
     love.graphics.rectangle("fill", game.settings.resolution.x - eLBot, 50, eLBot, 50)
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(r, g, b, 255)
     scale = player.scoreRate / game.constants.scoreCap
     scale = scale * 0.5
-    love.graphics.printf(player.displayScore, game.settings.resolution.x -  eLBot, 60, eLBot/(2 + scale) - 5, "right", 0, 2 + scale, 2 + scale)
+    love.graphics.printf(math.floor(player.displayScore + 0.5), game.settings.resolution.x -  eLBot, 60, eLBot/(2 + scale) - 5, "right", 0, 2 + scale, 2 + scale)
+    -- love.graphics.setColor(255, 255, 255, 255)
+    -- love.graphics.print(player.score, 15, 500, 0, 1, 1)
 end
 
 function love.keypressed(key)

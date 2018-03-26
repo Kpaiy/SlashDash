@@ -280,7 +280,6 @@ function player.scoreUpdate(dt)
         rate = game.constants.scoreCap
     end
     player.displayScore = player.displayScore + rate * dt
-    player.displayScore = math.floor(player.displayScore + 0.5)
     if player.displayScore > player.score then
         player.displayScore = player.score
     end

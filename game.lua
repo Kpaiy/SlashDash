@@ -226,6 +226,12 @@ function game.hud()
     else
         love.graphics.draw(game.resources.graphics.ui.noDash, game.ui.dash, 75 + 2*w, 75 - h/2)
     end
+
+    -- bottom right
+    love.graphics.setColor(0, 0, 0, game.constants.hudOpacity)
+    love.graphics.rectangle("fill", game.settings.resolution.x - eLBot, 50, eLBot, 50)
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.printf(player.score, game.settings.resolution.x -  eLBot, 60, eLBot/2.5 - 5, "right", 0, 2.5, 2.5)
 end
 
 function love.keypressed(key)

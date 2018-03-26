@@ -15,6 +15,8 @@ enemy = {
 
             fireRate = -1,
             bullet = projectile.types.normal,
+
+            score = 15,
         },
         archer = {
             flying = false,
@@ -31,6 +33,8 @@ enemy = {
 
             fireRate = 1,
             bullet = projectile.types.normal,
+
+            score = 15,
         },
         wraith = {
             flying = true,
@@ -47,6 +51,8 @@ enemy = {
 
             fireRate = 0.5,
             bullet = projectile.types.fast,
+
+            score = 20,
         }
     },
     jitter = 2,
@@ -78,6 +84,8 @@ function enemy.new(x, y, type)
         fireRate = type.fireRate,
         bullet = type.bullet,
 
+        score = type.score,
+
         state = type.startState,
         thinkCounter = type.thinkTime,
         fireCounter = 0,
@@ -101,6 +109,7 @@ end
 -- returns true if the enemy is dead
 function enemy.update(i, dt)
     if enemy[i].health <= 0 then
+        player.addScore(enemy[i].score)
         return true
     end
 

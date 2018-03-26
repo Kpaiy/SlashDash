@@ -62,7 +62,7 @@ player = {
 
     -- combo and score
     score = 0,
-    combo = 5,
+    combo = 1,
 }
 
 function player.getInput()
@@ -264,6 +264,11 @@ function player.addCombo(cmb)
     if player.combo > game.constants.comboMax then
         player.combo = game.constants.comboMax
     end
+end
+
+function player.addScore(score)
+    player.score = player.score + (score * player.combo)
+    player.score = math.floor(player.score + 0.5)
 end
 
 function player.slash()
